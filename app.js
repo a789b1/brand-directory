@@ -1,6 +1,24 @@
 const filters=[...document.querySelectorAll('[data-filter]')];
 const cards=[...document.querySelectorAll('[data-platform]')];
 const status=document.querySelector('#status');
+function updatePreviewAccess(){
+ for(const card of document.querySelectorAll('[data-preview-url]')){
+  const entry=card.querySelector('.direct-access');
+  const available=Date.now()<Date.parse(card.dataset.previewExpires);
+  for(const link of card.querySelectorAll('.image-link,.brand')){
+   if(!link.dataset.storeUrl)link.dataset.storeUrl=link.href;
+   link.href=available?card.dataset.previewUrl:link.dataset.storeUrl;
+  }
+  entry.hidden=!available;
+  card.querySelector('.access-label').textContent=available?'Backup password':'Store password';
+ }
+}
+updatePreviewAccess();
+addEventListener('pageshow',updatePreviewAccess);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)updatePreviewAccess();});
+const nextExpiry=Math.min(...[...document.querySelectorAll('[data-preview-expires]')].map(card=>Date.parse(card.dataset.previewExpires)).filter(time=>time>Date.now()));
+if(Number.isFinite(nextExpiry))setTimeout(updatePreviewAccess,nextExpiry-Date.now()+1000);
+
 function filterStores(platform){
  if(!['all','Shopify','WordPress'].includes(platform))platform='all';
  for(const button of filters){const active=button.dataset.filter===platform;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));}
