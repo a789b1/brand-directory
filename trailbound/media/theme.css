@@ -223,8 +223,8 @@ body.showcase-stillform .site-header {
 .showcase-stillform .site-header .wordmark { color: #372733; letter-spacing: 0; }
 .showcase-stillform .site-header .header-actions { margin-left: auto; }
 .showcase-alloyworks .mobile-nav nav { background: #0f1724; color: white; }
-.showcase-alloyworks .menu-lines, .showcase-alloyworks .menu-lines::before,
-.showcase-alloyworks .menu-lines::after { background-color: currentColor; }
+.showcase-alloyworks .menu-lines { background-color: transparent; border-color: currentColor; }
+.showcase-alloyworks .menu-lines::before, .showcase-alloyworks .menu-lines::after { background-color: currentColor; }
 
 .showcase-breadcrumbs ol {
   display: flex; flex-wrap: wrap; gap: 4px 12px; list-style: none;
