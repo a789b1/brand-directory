@@ -62,9 +62,25 @@ if (grid && search) {
 
 const menu = document.querySelector("[data-mobile-nav]");
 if (menu) {
+  const toggle = menu.querySelector('summary');
+  toggle.setAttribute('aria-expanded', String(menu.open));
+  menu.addEventListener('toggle', () => toggle.setAttribute('aria-expanded', String(menu.open)));
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape" || !menu.open) return;
     menu.open = false;
     menu.querySelector("summary").focus();
+  });
+}
+
+const photoDialog = document.querySelector('.photo-dialog');
+const enlargeButton = document.querySelector('[data-zoom]');
+if (photoDialog && enlargeButton) {
+  enlargeButton.addEventListener('click', () => photoDialog.showModal());
+  photoDialog.querySelector('[data-close-zoom]').addEventListener('click', () => photoDialog.close());
+  photoDialog.addEventListener('click', (event) => {
+    if (event.target === photoDialog) {
+      const bounds = photoDialog.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) photoDialog.close();
+    }
   });
 }
