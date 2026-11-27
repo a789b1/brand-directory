@@ -105,8 +105,21 @@
       chip.href = url.href;
       chip.setAttribute('aria-current', String(current === category));
     }
-    const resultHeader = document.querySelector('.catalog-refine');
-    resultHeader.id = 'catalog-results';
+    const vehicleLabel = [year, make || models[model]?.make, models[model]?.name || model].filter(Boolean).join(' ');
+    const finder = document.querySelector('.finder');
+    const searchBar = document.querySelector('#active-search');
+    if ((vehicleLabel || q) && searchBar) {
+      document.querySelector('#search-label').textContent = vehicleLabel || 'Part search: “' + q + '”';
+      searchBar.hidden = false;
+      finder.hidden = true;
+      const edit = document.querySelector('#edit-search');
+      edit.addEventListener('click', () => {
+        finder.hidden = !finder.hidden;
+        edit.setAttribute('aria-expanded', String(!finder.hidden));
+        edit.textContent = finder.hidden ? 'Change search' : 'Close search';
+        if (!finder.hidden) finder.querySelector('form:not([hidden]) select, form:not([hidden]) input').focus();
+      });
+    }
     function display() {
       const cards = Array.from(grid.children);
       const order = sort.value;
@@ -115,6 +128,7 @@
         return order === 'asc' ? one.price-two.price : order === 'desc' ? two.price-one.price : parts.indexOf(one)-parts.indexOf(two);
       });
       let count = 0;
+      let mountChecks = 0;
       const needle = compact(q);
       for (const card of cards) {
         const part = itemById.get(card.dataset.card);
@@ -122,14 +136,24 @@
         const ok = (!category || category === part.category) && matches(part, make, model, year) &&
           (!q || Boolean(needle) && keys.some(key => compact(key).includes(needle)));
         card.hidden = !ok;
-        if (ok) count++;
+        if (ok) {
+          count++;
+          if (part.by_mount) mountChecks++;
+        }
         grid.append(card);
         const detail = new URL(base + 'parts/' + part.slug + '/', document.baseURI);
         for (const key of ['make','model','year']) if (params.get(key)) detail.searchParams.set(key, params.get(key));
         card.querySelector('a').href = detail.href;
       }
       const qualifier = [make, models[model]?.name || model, year, q ? '“' + q + '”' : ''].filter(Boolean).join(' · ');
-      document.querySelector('#results').textContent = count + (count === 1 ? ' part' : ' parts') + (qualifier ? ' for ' + qualifier : '');
+      const filtered = Boolean(qualifier || category);
+      let message = filtered ? count + ' of ' + parts.length + ' parts' : parts.length + ' parts';
+      if (vehicleLabel) message += ' for ' + vehicleLabel;
+      if (q) message += ' for “' + q + '”';
+      if (vehicleLabel && !q && mountChecks) {
+        message += ' · ' + (count - mountChecks) + ' vehicle-specific, ' + mountChecks + ' by mounting requirements';
+      }
+      document.querySelector('#results').textContent = message;
       document.querySelector('#empty').hidden = count !== 0;
       grid.hidden = count === 0;
       document.querySelector('#reset').hidden = !(make || model || year || q || category || order !== 'featured');
@@ -153,7 +177,11 @@
     const matchBox = document.querySelector('[data-vehicle-match]');
     if ((model || make || year) && (!model || models[model])) {
       const label = [make || models[model]?.make, models[model]?.name, year].filter(Boolean).join(' ');
-      matchBox.textContent = matches(part, make, model, year) ? 'Catalog match for ' + label + '. Check the configuration notes below.' : 'No listed match for ' + label + '. Confirm fitment with the retailer.';
+      if (matches(part, make, model, year)) {
+        matchBox.textContent = part.by_mount ? 'To use this part on your ' + label + ', check the mounting requirements. ' + part.fit_check : 'Catalog match for ' + label + '. Check the configuration notes below.';
+      } else {
+        matchBox.textContent = 'No listed match for ' + label + '. Confirm fitment with the retailer.';
+      }
       matchBox.hidden = false;
     }
     document.querySelector('[data-add]').addEventListener('click', () => {

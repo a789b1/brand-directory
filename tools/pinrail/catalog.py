@@ -24,8 +24,9 @@ PRODUCTS = []
 for row in db.execute("""
     SELECT slug, name, brand, part_number AS number, category, price_cents,
            retailer, retailer_url AS buy, reference_url AS source, summary,
-           description AS detail, fitment_note AS condition, mount, image_alt AS alt
-    FROM part ORDER BY rowid
+           description AS detail, fitment_note AS condition, mount, image_alt AS alt,
+           COALESCE(h.check_note, '') AS fit_check, COALESCE(h.by_mount, 0) AS by_mount
+    FROM part LEFT JOIN fitment_hint h ON h.part = part.slug ORDER BY part.rowid
 """):
     product = dict(row)
     product['price'] = product.pop('price_cents') / 100

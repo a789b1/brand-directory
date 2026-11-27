@@ -18,3 +18,15 @@ footer{background:#18392d;color:#eef2e6;margin-top:0}.foot{padding:52px 0 38px;d
 @media(max-width:480px){.grid,.featured .grid,.collection{grid-template-columns:1fr}.card-main{display:flex}.part-image{aspect-ratio:1}.card-sup{margin-top:11px}.card-main strong{margin-top:0}.featured{padding-top:42px}.hero-copy{max-width:100%}.foot-end{align-items:flex-start}.list-row{grid-template-columns:60px 1fr}.list-row img{width:60px}.list-row>.qty{grid-column:2}.list-actions{grid-column:2}.subnav{gap:18px}.buy-actions .btn{flex-grow:1}.buy-actions{width:100%}.finder .fields select{font-size:1rem}.specs dl>div{grid-template-columns:.88fr 1fr}.guide-band h2{font-size:2.35rem}}
 @media(min-width:651px) and (prefers-reduced-motion:no-preference){.hero-copy{animation:arrive .55s ease-out both}@keyframes arrive{from{transform:translateY(5px)}to{transform:none}}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* The selected vehicle stays visible while the catalog gets the available space. */
+.active-search{display:flex;align-items:center;justify-content:space-between;gap:16px;border-block:1px solid var(--line);background:var(--soft);padding:12px 17px;font-weight:700}
+.active-search button{font:600 .9rem var(--sans);border:0;padding:8px 0;background:transparent;text-decoration:underline;text-underline-offset:4px}
+.active-search:not([hidden])+.finder:not([hidden]){margin-top:12px}
+.fields .btn{white-space:nowrap}
+.collection .card-sup{flex-wrap:wrap;gap:3px 8px}
+.collection .part-link{height:100%}
+.match-line #reset{flex:none}
+@media(min-width:1200px){.collection{grid-template-columns:repeat(4,minmax(0,1fr))}.collection .card-main{display:block}.collection .card-main strong{display:block;margin-top:4px}}
+@media(max-width:700px){.catalog-refine{gap:12px;margin-top:17px}.match-line{align-items:flex-start}.match-line #results{max-width:66%}.chip{min-height:36px}.active-search{padding:8px 13px}}
+@media(min-width:335px) and (max-width:480px){.collection{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px}.collection .card-main{display:block}.collection .card-main h3{font-size:1rem;line-height:1.24}.collection .card-main strong{display:block;margin-top:4px;font-size:.93rem}.collection .card-sup{display:grid;line-height:1.25}.collection .card-sup span{overflow-wrap:anywhere}.collection .part-card p{font-size:.85rem;line-height:1.35}.catalog-refine .category-links{gap:5px}.catalog-refine .chip{padding:6px 10px;font-size:.84rem}}
